@@ -1,0 +1,22 @@
+name: Docker push CI
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: docker login 
+      run: echo ${{secrets.DOCKERHUB_ACCESS_TOKEN}} | docker login -u ${{secrets.DOCKERHUB_USERNAME}} --password-stdin
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: build and push the docker image
+      run: |
+        tag=$(date +%F)
+        docker build -t jcozardocencia/cosa:${tag} .
+        docker push jcozardocencia/cosa:${tag}
